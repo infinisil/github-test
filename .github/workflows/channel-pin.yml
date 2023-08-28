@@ -68,6 +68,7 @@ jobs:
             change_url="$GITHUB_SERVER_URL"/"$GITHUB_REPOSITORY"/compare/"$oldRev".."$newRev"
 
             echo "Checking if anything other than $pinFile changed between $oldRev and $newRev"
+            # Only don't make a PR if only the pin file changed, not if it was added/removed
             if [[ -f "$oldPath"/"$pinFile" ]]
               && [[ -f "$newPath"/"$pinFile" ]]
               && diff >/dev/null --recursive --exclude "$pinFile" "$oldPath" "$newPath"; then
