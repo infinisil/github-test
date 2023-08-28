@@ -27,7 +27,7 @@ jobs:
       - name: Check out development branch
         uses: actions/checkout@v3
         with:
-          - ref: ${{ steps.dev-branch.outputs.branch }}
+          - ref: "${{ steps.dev-branch.outputs.branch }}"
       - name: Update pin
         run: echo "$GITHUB_SHA" > nixos-prebuild-commit
       - name: Create Pull Request
