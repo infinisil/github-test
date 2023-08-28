@@ -40,7 +40,7 @@ jobs:
           mapfile -t newInfo <<< \
             $(nix-prefetch-url \
               "${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/tarball/$newRev" \
-              --type sha256 --unpack --print-path)
+              --type sha256 --unpack --print-path --name nixpkgs)
           newHash=${newInfo[0]}
           newPath=${newInfo[1]}
           echo "Got hash $newHash and path $newPath"
@@ -55,9 +55,10 @@ jobs:
             mapfile -t oldInfo <<< \
               $(nix-prefetch-url \
                 "${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/tarball/$oldRev" \
-                --type sha256 --unpack --print-path)
+                --type sha256 --unpack --print-path --name nixpkgs)
             oldHash=${oldInfo[0]}
             oldPath=${oldInfo[1]}
+            echo "Got hash $oldHash and path $oldPath"
 
             change_url="$GITHUB_SERVER_URL"/"$GITHUB_REPOSITORY"/compare/"$oldRev".."$newRev"
 
