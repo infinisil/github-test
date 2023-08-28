@@ -53,6 +53,7 @@ jobs:
             oldPath=${oldInfo[1]}
 
             change_url="$GITHUB_SERVER_URL"/"$GITHUB_REPOSITORY"/compare/"$oldRev".."$newRev"
+            echo "change_url=$change_url" >> "$GITHUB_OUTPUT"
 
             filesChanged=$(git diff --no-index --name-only "$oldPath" "$newPath") || true
 
@@ -73,11 +74,11 @@ jobs:
               --arg narHash "$newHash" \
               '$ARGS.named'
 
-            pr_title_prefix=""
             if [[ "$GITHUB_REF_NAME" != nixos-unstable ]]; then
-              pr_title_prefix="[${GITHUB_REF_NAME#nixos-}] "
+              pr_title="[${GITHUB_REF_NAME#nixos-}] "
             fi
-            echo "pr_title_prefix=$pr_title_prefix" >> "$GITHUB_OUTPUT"
+            pr_title="${pr_title}Update pinned channel commit"
+            echo "pr_title=$pr_title" >> "$GITHUB_OUTPUT"
           fi
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v5
@@ -85,8 +86,8 @@ jobs:
         with:
           branch: "update-channel-pin/${{ steps.dev-branch.outputs.branch }}"
           commit-message: "Update pinned channel commit"
-          title: "${{ steps.update.outputs.pr_title_prefix }}Update pinned channel commit"
+          title: "${{ steps.update.outputs.pr_title }}"
           author: "GitHub <noreply@github.com>"
           body: |
-            Automated PR to update the pin of the ${{ github.ref_name }} channel in the ${{ steps.dev_branch.outputs.branch }} branch to the latest commit ${{ github.sha }}.
+            Automated PR to update the pin of the ${{ github.ref_name }} channel in the ${{ steps.dev_branch.outputs.branch }} branch to the latest commit ${{ github.sha }}. Changes: ${{ steps.update.outputs.change_url || '' }}
 
