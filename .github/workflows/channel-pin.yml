@@ -35,6 +35,8 @@ jobs:
       - name: Update pin
         id: update
         run: |
+          set -e
+
           newRev=$GITHUB_SHA
           pinFile=prebuilt-commit.json
 
