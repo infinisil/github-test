@@ -37,16 +37,20 @@ jobs:
           pinFile=prebuilt-commit.json
           create_pr=1
 
-          read -d "\n" -r newHash newPath <<< \
+          mapfile -t newInfo <<< \
             $(nix-prefetch-url \
               "${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/tarball/$newRev" \
               --type sha256 --unpack --print-path)
+          newHash=${newInfo[0]}
+          newPath=${newInfo[1]}
 
           if oldRev=$(jq -r '.rev' "$pinFile"); then
-            read -d "\n" -r oldHash oldPath <<< \
+            mapfile -t oldInfo <<< \
               $(nix-prefetch-url \
                 "${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/tarball/$oldRev" \
                 --type sha256 --unpack --print-path)
+            oldHash=${oldInfo[0]}
+            oldPath=${oldInfo[1]}
 
             filesChanged=$(git diff --no-index --name-only "$oldPath" "$newPath") || true
 
