@@ -67,7 +67,7 @@ jobs:
           fi
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v5
-        if: ${{ steps.update.outputs.create_pr != "" }}
+        if: ${{ steps.update.outputs.create_pr != '' }}
         with:
           branch: "update-channel-pin/${{ steps.dev-branch.outputs.branch }}"
           commit-message: "Update pinned channel commit"
