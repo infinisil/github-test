@@ -86,13 +86,14 @@ jobs:
             fi
             pr_title="${pr_title}Update pinned channel commit"
 
-            pr_body="Automated PR to update the pin of the $GITHUB_REF_NAME channel in the ${{ steps.dev_branch.outputs.branch }} branch to the latest commit $GITHUB_SHA."
+            pr_body_path=$(mktemp)
+            echo "Automated PR to update the pin of the $GITHUB_REF_NAME channel in the ${{ steps.dev_branch.outputs.branch }} branch to the latest commit $GITHUB_SHA." >> "$pr_body_path"
             if [[ -n "$change_url" ]]; then
-              pr_body+=$'\n\n'" [Channel changes]($change_url)"
+              echo -n "\n\n [Channel changes]($change_url)" >> "$pr_body_path"
             fi
 
             echo "pr_title=$pr_title" >> "$GITHUB_OUTPUT"
-            echo "pr_body=$pr_body" >> "$GITHUB_OUTPUT"
+            echo "pr_body_path=$pr_body_path" >> "$GITHUB_OUTPUT"
           fi
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v5
@@ -102,5 +103,5 @@ jobs:
           commit-message: "Update pinned channel commit"
           title: "${{ steps.update.outputs.pr_title }}"
           author: "GitHub <noreply@github.com>"
-          body: "${{ steps.update.outputs.pr_body }}"
+          body-path: "${{ steps.update.outputs.pr_body_path }}"
 
