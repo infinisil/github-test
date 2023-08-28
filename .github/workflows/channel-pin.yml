@@ -33,12 +33,27 @@ jobs:
       - name: Update pin
         id: update
         run: |
-          hash=$(nix-prefetch-url "$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/tarball/$GITHUB_SHA" \
+          file=prebuilt-commit.json
+
+          previousRev=$(jq '.rev' "$file")
+          currentRev=$GITHUB_SHA
+
+          if [[ "$(git diff "$previousRev" "$currentRev" --name-only)" == 
+
+
+
+          # If the previous commit already changed exactly only the file, then
+          # This channel update was caused by a previous update of the pin, meaning there
+          if [[ "$(git diff HEAD~ --name-only)" == "$file" ]]; then
+
+          fi
+
+          narHash=$(nix-prefetch-url "$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/tarball/$GITHUB_SHA" \
             --type sha256 --unpack)
           jq -n \
-            --arg sha "$GITHUB_SHA" \
-            --arg hash "$hash" \
-            '{ rev: $sha, narHash: $hash }' > prebuilt-commit.json
+            --arg rev "$GITHUB_SHA" \
+            --arg narHash "$hash" \
+            '{ rev: $rev, narHash: $narHash }' > prebuilt-commit.json
 
           if [[ "$GITHUB_REF_NAME" != nixos-unstable ]]; then
             pr_title="[${GITHUB_REF_NAME#nixos-}] "
