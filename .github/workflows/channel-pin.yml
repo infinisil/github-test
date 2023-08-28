@@ -29,8 +29,9 @@ jobs:
       - name: Check out development branch
         uses: actions/checkout@v3
         with:
-          ref: "${{ steps.dev-branch.outputs.branch }}"
+          ref: ${{ steps.dev-branch.outputs.branch }}
       - name: Update pin
+        id: update
         run: |
           hash=$(nix-prefetch-url "$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/tarball/$GITHUB_SHA" \
             --type sha256 --unpack)
@@ -38,12 +39,18 @@ jobs:
             --arg sha "$GITHUB_SHA" \
             --arg hash "$hash" \
             '{ rev: $sha, narHash: $hash }' > prebuilt-commit.json
+
+          if [[ "$GITHUB_REF_NAME" != nixos-unstable ]]; then
+            pr_title="[${GITHUB_REF_NAME#nixos-}] "
+          fi
+          pr_title+="Update pinned channel commit"
+          echo "pr_title=$pr_title" >> "$GITHUB_OUTPUT"
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v5
         with:
           branch: "update-channel-pin/${{ steps.dev-branch.outputs.branch }}"
-          commit-message: "Update ${{ github.ref_name }} pin"
-          title: "Update ${{ github.ref_name }} pin"
+          commit-message: "Update pinned channel commit"
+          title: ${{ steps.update.outputs.pr_title }}
           author: "GitHub <noreply@github.com>"
           body: |
             Automated PR to update the pin of the ${{ github.ref_name }} channel in the ${{ steps.dev_branch.outputs.branch }} branch to the latest commit ${{ github.sha }}.
