@@ -35,16 +35,14 @@ jobs:
       - name: Update pin
         id: update
         run: |
-          set -e
-
           newRev=$GITHUB_SHA
           pinFile=prebuilt-commit.json
 
           echo "Fetching new revision $newRev"
-          mapfile -t newInfo <<< \
-            $(nix-prefetch-url \
+          stdout=$(nix-prefetch-url \
               "${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/tarball/$newRev" \
               --type sha256 --unpack --print-path --name nixpkgs)
+          mapfile -t newInfo <<<"$stdout"
           newHash=${newInfo[0]}
           newPath=${newInfo[1]}
           newPinFileContents=$(jq -n \
@@ -60,10 +58,10 @@ jobs:
             exit 1
           else
             echo "The existing file has revision $oldRev, now fetching that too"
-            mapfile -t oldInfo <<< \
-              $(nix-prefetch-url \
+            stdout=$(nix-prefetch-url \
                 "${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/tarball/$oldRev" \
                 --type sha256 --unpack --print-path --name nixpkgs)
+            mapfile -t newInfo <<<"$stdout"
             oldHash=${oldInfo[0]}
             oldPath=${oldInfo[1]}
 
