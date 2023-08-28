@@ -16,6 +16,7 @@ jobs:
     name: Update channel pin
     runs-on: ubuntu-latest
     steps:
+      - uses: cachix/install-nix-action@v22
       - name: Compute development branch
         id: dev-branch
         run: |
@@ -30,7 +31,10 @@ jobs:
         with:
           ref: "${{ steps.dev-branch.outputs.branch }}"
       - name: Update pin
-        run: echo "$GITHUB_SHA" > nixos-prebuild-commit
+        run: |
+          echo "$GITHUB_SHA" > nixos-prebuilt-commit
+          nix-prefetch-url "$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/tarball/$GITHUB_SHA" \
+            --type sha256 --unpack > nixos-prebuilt-commit-hash
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v5
         with:
