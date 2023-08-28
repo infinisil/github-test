@@ -33,7 +33,7 @@ jobs:
       - name: Update pin
         run: |
           hash=$(nix-prefetch-url "$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/tarball/$GITHUB_SHA" \
-            --type sha256 --unpack > nixos-prebuilt-commit-hash)
+            --type sha256 --unpack)
           jq -n \
             --arg sha "$GITHUB_SHA" \
             --arg hash "$hash" \
