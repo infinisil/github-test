@@ -83,7 +83,7 @@ jobs:
 
           if [[ -n "$create_pr" ]]; then
             echo "Updating $pinFile"
-            printf "%s" "$newPinFileContents" > "$pinFile"
+            printf "%s\n" "$newPinFileContents" > "$pinFile"
 
             echo "Assembling PR title and body"
             if [[ "$GITHUB_REF_NAME" != nixos-unstable ]]; then
