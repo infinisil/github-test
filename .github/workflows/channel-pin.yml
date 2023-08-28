@@ -1,0 +1,43 @@
+name: Update channel pins
+
+on:
+  push:
+    branches:
+      - nixos-unstable
+      # Any release branches like nixos-23.05
+      - 'nixos-[0-9][0-9].[0-9][0-9]'
+
+# permissions:
+#   ???
+
+jobs:
+  update_pin:
+    name: Update channel pin
+    runs-on: ubuntu-latest
+    steps:
+      - name: Compute development branch
+        id: dev-branch
+        run: |
+          if [[ "$GITHUB_REF_NAME" == nixos-unstable ]]; then
+            branch=master
+          else
+            branch=release${GITHUB_REF_NAME#nixos}
+          fi
+          echo "branch=$branch" >> "$GITHUB_OUTPUT"
+      - name: Check out development branch
+        uses: actions/checkout@v3
+        with:
+          - ref: ${{ steps.dev-branch.outputs.branch }}
+      - name: Update pin
+        run: echo "$GITHUB_SHA" > nixos-prebuild-commit
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v5
+        with:
+          branch: "update-channel-pin/${{ steps.dev-branch.outputs.branch }}"
+          commit-message: "Update ${{ github.ref_name }} pin"
+          title: "Update ${{ github.ref_name }} pin"
+          body: |
+            Automated PR to update the pin of the ${{ github.ref_name }} channel in the ${{ steps.dev_branch.outputs.branch }} branch to the latest commit ${{ github.sha }}.
+          # body-path: 
+          # labels: "foo,bar"
+
