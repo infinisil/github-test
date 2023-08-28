@@ -7,6 +7,7 @@ on:
       # Any release branches like nixos-23.05
       - 'nixos-[0-9][0-9].[0-9][0-9]'
 
+# Needed to create PRs
 permissions:
   contents: write
   pull-requests: write
@@ -23,6 +24,7 @@ jobs:
           if [[ "$GITHUB_REF_NAME" == nixos-unstable ]]; then
             branch=master
           else
+            # Removes the "nixos" prefix and replaces it with "release"
             branch=release${GITHUB_REF_NAME#nixos}
           fi
           echo "branch=$branch" >> "$GITHUB_OUTPUT"
@@ -47,9 +49,8 @@ jobs:
 
           echo "Checking if $pinFile exists already in the development branch"
           if ! oldRev=$(jq -r '.rev' "$pinFile"); then
-            echo "It does not, PR necessary to initialise it"
-            create_pr=1
-            change_url=
+            echo "It does not, this should not happen"
+            exit 1
           else
             echo "It does, with revision $oldRev, now fetching that too"
             mapfile -t oldInfo <<< \
@@ -87,10 +88,11 @@ jobs:
             pr_title="${pr_title}Update pinned channel commit"
 
             pr_body_path=$(mktemp)
-            echo "Automated PR to update the pin of the $GITHUB_REF_NAME channel in the ${{ steps.dev_branch.outputs.branch }} branch to the latest commit $GITHUB_SHA." >> "$pr_body_path"
-            if [[ -n "$change_url" ]]; then
-              echo -e "\n\n [Channel changes]($change_url)" >> "$pr_body_path"
-            fi
+            {
+              echo "Automated PR to update the pin of the $GITHUB_REF_NAME channel in the ${{ steps.dev_branch.outputs.branch }} branch to the latest commit $GITHUB_SHA."
+              echo ""
+              echo "[Channel changes]($change_url)"
+            } > "$pr_body_path"
 
             echo "pr_title=$pr_title" >> "$GITHUB_OUTPUT"
             echo "pr_body_path=$pr_body_path" >> "$GITHUB_OUTPUT"
