@@ -45,12 +45,12 @@ jobs:
               --type sha256 --unpack --print-path --name nixpkgs)
           newHash=${newInfo[0]}
           newPath=${newInfo[1]}
-          pinFileContents=$(jq -n > "$pinFile" \
+          newPinFileContents=$(jq -n \
               --arg rev "$newRev" \
               --arg narHash "$newHash" \
               '$ARGS.named')
 
-          echo -e "File $pinFile would be updated to:\n$pinFileContents"
+          echo -e "File $pinFile would be updated to:\n$newPinFileContents"
 
           echo "Comparing this with the revision of the existing file"
           if ! oldRev=$(jq -r '.rev' "$pinFile"); then
@@ -79,11 +79,8 @@ jobs:
           echo "create_pr=$create_pr" >> "$GITHUB_OUTPUT"
 
           if [[ -n "$create_pr" ]]; then
-            echo "Updating $pinFile to point to $newRev with hash $newHash"
-            jq -n > "$pinFile" \
-              --arg rev "$newRev" \
-              --arg narHash "$newHash" \
-              '$ARGS.named'
+            echo "Updating $pinFile"
+            printf "%s" "$newPinFileContents" > "$pinFile"
 
             echo "Assembling PR title and body"
             if [[ "$GITHUB_REF_NAME" != nixos-unstable ]]; then
