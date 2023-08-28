@@ -45,21 +45,25 @@ jobs:
               --type sha256 --unpack --print-path --name nixpkgs)
           newHash=${newInfo[0]}
           newPath=${newInfo[1]}
-          echo "Got hash $newHash and path $newPath"
+          pinFileContents=$(jq -n > "$pinFile" \
+              --arg rev "$newRev" \
+              --arg narHash "$newHash" \
+              '$ARGS.named')
 
-          echo "Checking if $pinFile exists already in the development branch"
+          echo -e "File $pinFile would be updated to:\n$pinFileContents"
+
+          echo "Comparing this with the revision of the existing file"
           if ! oldRev=$(jq -r '.rev' "$pinFile"); then
-            echo "It does not, this should not happen"
+            echo "There is no existing file, make sure to initialize it properly, possibly using the above value"
             exit 1
           else
-            echo "It does, with revision $oldRev, now fetching that too"
+            echo "The existing file has revision $oldRev, now fetching that too"
             mapfile -t oldInfo <<< \
               $(nix-prefetch-url \
                 "${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/tarball/$oldRev" \
                 --type sha256 --unpack --print-path --name nixpkgs)
             oldHash=${oldInfo[0]}
             oldPath=${oldInfo[1]}
-            echo "Got hash $oldHash and path $oldPath"
 
             change_url="$GITHUB_SERVER_URL"/"$GITHUB_REPOSITORY"/compare/"$oldRev".."$newRev"
 
