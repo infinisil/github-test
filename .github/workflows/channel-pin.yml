@@ -89,7 +89,7 @@ jobs:
             pr_body_path=$(mktemp)
             echo "Automated PR to update the pin of the $GITHUB_REF_NAME channel in the ${{ steps.dev_branch.outputs.branch }} branch to the latest commit $GITHUB_SHA." >> "$pr_body_path"
             if [[ -n "$change_url" ]]; then
-              echo -n "\n\n [Channel changes]($change_url)" >> "$pr_body_path"
+              echo -e "\n\n [Channel changes]($change_url)" >> "$pr_body_path"
             fi
 
             echo "pr_title=$pr_title" >> "$GITHUB_OUTPUT"
