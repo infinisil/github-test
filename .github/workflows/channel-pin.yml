@@ -6,7 +6,6 @@ on:
       - nixos-unstable
       # Any release branches like nixos-23.05
       - 'nixos-[0-9][0-9].[0-9][0-9]'
-  workflow_dispatch:
 
 # permissions:
 #   ???
