@@ -36,6 +36,7 @@ jobs:
           branch: "update-channel-pin/${{ steps.dev-branch.outputs.branch }}"
           commit-message: "Update ${{ github.ref_name }} pin"
           title: "Update ${{ github.ref_name }} pin"
+          author: "GitHub <noreply@github.com>"
           body: |
             Automated PR to update the pin of the ${{ github.ref_name }} channel in the ${{ steps.dev_branch.outputs.branch }} branch to the latest commit ${{ github.sha }}.
           # body-path: 
