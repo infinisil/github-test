@@ -1,6 +1,6 @@
 name: Cancellation test
 
-on: pull_request
+on: pull_request_target
 
 jobs:
   cancel-test:
@@ -10,7 +10,6 @@ jobs:
       actions: write
     steps:
       - name: Update pin
-        id: update
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
