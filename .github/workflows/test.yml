@@ -1,6 +1,6 @@
 name: Cancellation test
 
-on: pull_request
+on: pull_request_target
 
 # Needed to create PRs
 permissions:
@@ -12,22 +12,15 @@ jobs:
     name: cancel-test
     runs-on: ubuntu-latest
     steps:
-      # - name: Update pin
-      #   id: update
-      #   env:
-      #     GH_TOKEN: ${{ github.token }}
-      #   run: |
-      #     gh api \
-      #       --method POST \
-      #       -H "Accept: application/vnd.github+json" \
-      #       -H "X-GitHub-Api-Version: 2022-11-28" \
-      #       /repos/infinisil/github-test/actions/runs/$GITHUB_RUN_ID/cancel
-      #     sleep 10
-      #     echo successful
-      - name: cancel run if none of files we look for changes has changed
-        uses: andymckay/cancel-action@0.2
-
-      # needed since the run is not cancelled immediately
-      - name: wait for run cancellation
-        shell: bash
-        run: while true; do echo "Waiting for job to be cancelled"; sleep 5; done
+      - name: Update pin
+        id: update
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh api \
+            --method POST \
+            -H "Accept: application/vnd.github+json" \
+            -H "X-GitHub-Api-Version: 2022-11-28" \
+            /repos/infinisil/github-test/actions/runs/$GITHUB_RUN_ID/cancel
+          sleep 10
+          echo successful
