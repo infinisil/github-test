@@ -1,11 +1,6 @@
 name: Cancellation test
 
-on: pull_request_target
-
-# Needed to create PRs
-permissions:
-  contents: write
-  pull-requests: write
+on: pull_request
 
 jobs:
   cancel-test:
