@@ -6,6 +6,7 @@ jobs:
   cancel-test:
     name: cancel-test
     runs-on: ubuntu-latest
+    permissions: write-all
     steps:
       - name: Update pin
         id: update
