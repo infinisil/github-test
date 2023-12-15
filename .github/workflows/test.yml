@@ -9,10 +9,16 @@ permissions:
 
 jobs:
   cancel-test:
-    name: Test cancellation
+    name: cancel-test
     runs-on: ubuntu-latest
     steps:
       - name: Update pin
         id: update
         run: |
-          echo hi
+          gh api \
+            --method POST \
+            -H "Accept: application/vnd.github+json" \
+            -H "X-GitHub-Api-Version: 2022-11-28" \
+            /repos/infinisil/github-test/actions/runs/$GITHUB_RUN_ID/cancel
+          sleep 10
+          echo successful
