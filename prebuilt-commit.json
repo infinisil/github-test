@@ -1,4 +1,5 @@
 {
   "rev": "5475a6fea72664caa6d212a8bac3dda9f9432ab7",
-  "narHash": "033fml8c94mfpcwv7n8a3z44pv8lchsblpnbz9h5bqqm4929anck"
+  "narHash": "033fml8c94mfpcwv7n8a3z44pv8lchsblpnbz9h5bqqm4929anck",
+  "foo": 10
 }
