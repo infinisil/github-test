@@ -29,3 +29,5 @@ jobs:
           echo "Run number: ${{ github.run_number }}"
           echo "Run attempt: ${{ github.run_attempt }}"
           echo "Job: $GITHUB_JOB"
+          echo "Event path: ${{ github.event_path }}"
+          jq . ${{ github.event_path }}
