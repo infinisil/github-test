@@ -17,6 +17,8 @@ jobs:
     # The type of runner that the job will run on
     runs-on: ubuntu-latest
 
+    permissions: {}
+
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
 
@@ -24,6 +26,8 @@ jobs:
       - name: Determine if this should be skipped
         id: skip
         if: github.event_name == 'pull_request_target'
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
           workflowId=$(gh api \
             -H "Accept: application/vnd.github+json" \
@@ -42,13 +46,13 @@ jobs:
 
           if [[ -n "$htmlUrl" ]]; then
             echo "Skipping because workflow is already running for a pull_request event: $htmlUrl"
+            echo "yes=true" >> "$GITHUB_OUTPUT"
           else
             echo "This is the only workflow run, not skipping"
-            echo "dont=true" >> "$GITHUB_OUTPUT"
           fi
 
       - name: Work
-        if: steps.skip.outputs.dont
+        if: ${{ !steps.skip.outputs.yes }}
         run: |
           echo "Doing stuff"
 
