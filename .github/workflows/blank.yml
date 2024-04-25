@@ -21,8 +21,6 @@ jobs:
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
-      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-      - uses: actions/checkout@v3
 
       # Runs a single command using the runners shell
       - name: Cancel if there's 2
@@ -51,3 +49,8 @@ jobs:
               -H "X-GitHub-Api-Version: 2022-11-28" \
               /repos/${{ github.repository }}/actions/runs/${{ github.run_id }}/cancel
           fi
+        env:
+          GH_TOKEN: ${{ github.token }}
+
+      - run: |
+          echo "Doing stuff"
