@@ -23,6 +23,8 @@ jobs:
       # Runs a single command using the runners shell
       - name: Run a one-line script
         run: |
+          echo "Workflow: ${{ github.workflow }}"
+          echo "Workflow ref: ${{ github.workflow_ref }}"
           echo "Run ID: $GITHUB_RUN_ID"
           echo "Run number: ${{ github.run_number }}"
           echo "Run attempt: ${{ github.run_attempt }}"
