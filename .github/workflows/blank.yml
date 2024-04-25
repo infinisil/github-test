@@ -54,7 +54,7 @@ jobs:
       - name: Work
         if: ${{ !steps.skip.outputs.yes }}
         run: |
-          echo "Doing stuff"
+          echo "Doing other stuff"
 
 
 
